@@ -12,34 +12,47 @@ export default function Login() {
   });
 
   const handleLogin = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const res = await loginUser(form);
+  try {
+    const res = await loginUser(form);
+    console.log("LOGIN RESPONSE:", res.data);
 
-      // ✅ store user data
-      localStorage.setItem("userId", res.data.userId);
-      localStorage.setItem("role", res.data.role);
+    // ✅ handle any backend structure
+    const user =
+      res.data.data ||      // Case B
+      res.data.user ||      // sometimes
+      res.data;             // Case C
 
-      alert("Login Success ✅");
+    const userId = user._id || res.data.userId;
+    const role = user.role || res.data.role;
 
-      // 🚀 ROLE BASED REDIRECT (correct way)
-      if (res.data.role === "institute") {
-        navigate("/institute-dashboard");
-      } 
-      else if (res.data.role === "ngo") {
-        navigate("/ngo-dashboard");
-      } 
-      else {
-        navigate("/");
-      }
-
-    } catch (err) {
-      alert("Login Failed ❌");
-      console.error(err.response?.data || err.message);
+    if (!userId || !role) {
+      alert("Login response format incorrect from backend");
+      return;
     }
-  };
 
+    // ✅ store properly
+    localStorage.setItem(
+      "user",
+      JSON.stringify({ _id: userId, role })
+    );
+
+    alert("Login Success ✅");
+
+    if (role === "institute") {
+      navigate("/institute-dashboard");
+    } else if (role === "ngo") {
+      navigate("/ngo-dashboard");
+    } else {
+      navigate("/");
+    }
+
+  } catch (err) {
+    alert("Login Failed ❌");
+    console.error(err.response?.data || err.message);
+  }
+};
   return (
     <div className="login-wrapper">
 

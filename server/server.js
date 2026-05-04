@@ -11,6 +11,7 @@ const authRoutes = require("./routes/authRoutes");
 const foodRoutes = require("./routes/foodRoutes");
 const alertRoutes = require("./routes/alertRoutes");
 const foodDonationRoutes = require("./routes/foodDonationRoutes");
+const reportRoutes = require("./routes/reportRoutes");
 
 connectDB();
 
@@ -73,6 +74,9 @@ app.get("/", (req, res) => {
   res.send("Food Waste Management API Running 🚀");
 });
 
+
+
+app.use("/api", reportRoutes);
 /* =======================
    START SERVER
 ======================= */
